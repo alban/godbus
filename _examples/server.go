@@ -13,6 +13,7 @@ const intro = `
 <node>
 	<interface name="com.github.guelfey.Demo">
 		<method name="Foo">
+			<arg direction="in" type="h"/>
 			<arg direction="out" type="s"/>
 		</method>
 		<method name="Sleep">
@@ -22,7 +23,7 @@ const intro = `
 
 type foo string
 
-func (f foo) Foo() (string, *dbus.Error) {
+func (f foo) Foo(fd dbus.UnixFD) (string, *dbus.Error) {
 	fmt.Println(f)
 	return string(f), nil
 }

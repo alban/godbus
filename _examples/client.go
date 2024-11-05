@@ -8,6 +8,12 @@ import (
 )
 
 func main() {
+	f, err := os.OpenFile("/dev/null", os.O_RDONLY, 0755)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Failed to open /dev/null:", err)
+		os.Exit(1)
+	}
+
 	conn, err := dbus.ConnectSessionBus()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to connect to session bus:", err)
@@ -17,7 +23,7 @@ func main() {
 
 	var s string
 	obj := conn.Object("com.github.guelfey.Demo", "/com/github/guelfey/Demo")
-	err = obj.Call("com.github.guelfey.Demo.Foo", 0).Store(&s)
+	err = obj.Call("com.github.guelfey.Demo.Foo", 0, dbus.UnixFD(f.Fd())).Store(&s)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to call Foo function (is the server example running?):", err)
 		os.Exit(1)
